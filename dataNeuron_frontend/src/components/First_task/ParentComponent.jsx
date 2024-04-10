@@ -5,6 +5,7 @@ import ResizableComponent from "./ParentItems";
 import { Box } from "@chakra-ui/react";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const ParentComponent = () => {
+  
   const getLayoutsFromSomewhere = () => {
     return {
       lg: [

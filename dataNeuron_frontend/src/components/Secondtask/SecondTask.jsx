@@ -4,7 +4,7 @@ import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { AddData, GetData, UpdateData, count } from "../../redux/slices/action";
 import UserModal from "./AddUserModal";
 import UpdateUserModal from "./UpdateUserModal";
-
+import { ScaleLoader } from "react-spinners";
 const SecondTask = () => {
   const details = {
     image: "",
@@ -13,7 +13,12 @@ const SecondTask = () => {
     position: "",
     EmployeType: "",
   };
+
+  //to store the useradded data in the form
   const [data, setData] = useState(details);
+
+  const [Error, setError] = useState("");
+  // const [error,setError]=useState("");
   const dispatch = useDispatch();
   var [updateData, setUpdateData] = useState([]);
   const {
@@ -55,21 +60,32 @@ const SecondTask = () => {
 
   //function to dispatch the user details
   const handleSubmit = (e, identifier, id, onClose) => {
-    if (!identifier) {
-      dispatch(AddData(data)).then(() => {
-        dispatch(GetData()).then((res) => {
-          setUpdateData(res.payload);
-        });
-        dispatch(count());
-      });
+    if (
+      data.image.length < 2 &&
+      data.name.length < 2 &&
+      data.field.length < 2 &&
+      data.position.length < 2 &&
+      data.EmployeType.length < 2
+    ) {
+      alert("all field should be filled");
     } else {
-      dispatch(UpdateData({ id, data })).then(() => {
-        dispatch(count());
-        onClose();
-      });
+      if (!identifier) {
+        dispatch(AddData(data)).then(() => {
+          dispatch(GetData()).then((res) => {
+            setUpdateData(res.payload);
+          });
+          dispatch(count());
+        });
+      } else {
+        dispatch(UpdateData({ id, data })).then(() => {
+          dispatch(count());
+          onClose();
+        });
+      }
+      setData(details);
     }
-    setData(details);
   };
+
   return (
     <>
       <Flex
@@ -80,21 +96,28 @@ const SecondTask = () => {
         justifyContent={"flex-end"}
         alignItems={"center"}
       >
-        <Text>Add api Count : {Apicounts.addCount}</Text>
-        <Text>Update api Count: {Apicounts.updateCount}</Text>
+        <Text>
+          Add api Count : {Apicounts.addCount >= 0 ? Apicounts.addCount : 0}
+        </Text>
+
+        <Text>
+          Update api Count:{" "}
+          {Apicounts.updateCount >= 0 ? Apicounts.updateCount : 0}
+        </Text>
+
         <UserModal
           data={data}
-          text={"Add"}
-          setData={setData}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
         />
       </Flex>
-      <SimpleGrid columns={[1, 2, 5]} spacing="30px" w={"90%"} m={"auto"}>
-        {loading ? (
-          <Text>Loading</Text>
-        ) : (
-          updateData?.map((ele) => (
+      {loading ? (
+        <Center mt={"100px"}>
+          <ScaleLoader color="#36d7b7" />
+        </Center>
+      ) : (
+        <SimpleGrid columns={[1, 2, 5]} spacing="30px" w={"90%"} m={"auto"}>
+          {updateData?.map((ele) => (
             <Box
               boxShadow={"rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}
               textAlign={"center"}
@@ -109,15 +132,14 @@ const SecondTask = () => {
               <Text>{ele.position}</Text>
               <Text>{ele.EmployeType}</Text>
               <UpdateUserModal
-                text={"Update"}
                 data={ele}
                 handleChange={handleUpdatedata}
                 handleSubmit={handleSubmit}
               />
             </Box>
-          ))
-        )}
-      </SimpleGrid>
+          ))}
+        </SimpleGrid>
+      )}
     </>
   );
 };

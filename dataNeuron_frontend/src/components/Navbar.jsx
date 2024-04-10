@@ -74,11 +74,11 @@ const NavBar = () => {
         )}
         <Link to={"/resize"}>
           {" "}
-          <Text>First task</Text>
+          <Text cursor={"pointer"}>First task</Text>
         </Link>
         <Link to={"/crud"}>
           {" "}
-          <Text>Second task</Text>
+          <Text cursor={"pointer"}>Second task</Text>
         </Link>
         <HStack>
           <Avatar size="sm" src="https://bit.ly/dan-abramov">
