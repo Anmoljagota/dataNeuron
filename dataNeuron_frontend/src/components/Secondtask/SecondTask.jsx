@@ -29,13 +29,14 @@ const SecondTask = () => {
   const dispatch = useDispatch();
   var [updateData, setUpdateData] = useState([]);
 
-const {
+  const {
     data: employeDetails,
     Apicounts,
     loading,
   } = useSelector((employedata) => {
     return employedata.Data;
   }, shallowEqual);
+
   useEffect(() => {
     dispatch(GetData()).then((res) => {
       setUpdateData(res.payload);
@@ -71,31 +72,23 @@ const {
     toast({
       title,
       status,
-      duration: 3000,
+      duration: 2000,
       isClosable: true,
     });
   };
 
   //function to dispatch the user details
-  const handleSubmit = (e, onClose, identifier, id) => {
-    if (data.image.length < 1) {
-      Toaster("image field is required", "error");
-    } else if (data.name.length < 1) {
-      Toaster("name field is required", "error");
-    } else if (data.position.length < 1) {
-      Toaster("position field is required", "error");
-    } else if (data.field.length < 1) {
-      Toaster("field is required", "error");
+  const handleSubmit = async (e, onClose, identifier, id) => {
+    if (!data.image || !data.name || !data.position || !data.field) {
+      Toaster("All fields are required", "error");
     } else {
       if (!identifier) {
         onClose();
-        dispatch(AddData(data)).then(() => {
-          dispatch(GetData()).then((res) => {
-            setUpdateData(res.payload);
-            Toaster("Employee Created.", "success");
-          });
-          dispatch(count());
-        });
+        await dispatch(AddData(data));
+        const res = await dispatch(GetData());
+        setUpdateData(res.payload);
+        dispatch(count());
+        Toaster("Employee Created.", "success");
       } else {
         dispatch(UpdateData({ id, data })).then(() => {
           dispatch(count());
