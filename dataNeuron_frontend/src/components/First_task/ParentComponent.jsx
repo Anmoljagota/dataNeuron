@@ -10,7 +10,7 @@ const ParentComponent = () => {
       lg: [
         { i: "1", x: 0, y: 0, w: 1, h: 2 },
         { i: "2", x: 1, y: 0, w: 1, h: 2 },
-        { i: "3", x: 2, y: 2, w: 1, h: 2 },
+        { i: "3", x: 2, y: 1, w: 1, h: 2 },
       ],
       md: [
         { i: "1", x: 0, y: 0, w: 1, h: 1 },
@@ -30,10 +30,20 @@ const ParentComponent = () => {
     };
   };
   const [layouts, setLayouts] = useState(getLayouts());
-
+  const [cols, setCols] = useState(3);
   const onResize = (layout, oldItem, newItem) => {
-    console.log(oldItem, newItem,"checking");
+    if (newItem.i === "1" && newItem.w === 2) {
+      layout[0] = { ...layout[0], w: 2 }; // Resize the first box
+      layout[1] = { ...layout[1], x: 2 }; // Move the second box to the next position
+      layout[2] = { ...layout[2], x: 0, y: 1 };
+      console.log(layout, "layout");
+    }
+    else if(newItem.i==2 && newItem.w===2){
+      layout[2] = { ...layout[2], x: 0, y: 1 };
+
+    }
   };
+  console.log("i  am  layout", layouts);
   return (
     <ResponsiveGridLayout
       className="layout"
@@ -41,7 +51,7 @@ const ParentComponent = () => {
       isResizable={true}
       resizeHandles={["se", "ne", "sw", "nw", "e", "w", "n", "s"]}
       breakpoints={{ lg: 800, md: 699, sm: 450, xs: 400, xxs: 0 }}
-      cols={{ lg: 3, md: 2, sm: 2, xs: 2, xxs: 2 }}
+      cols={{ lg: cols, md: 2, sm: 2, xs: 2, xxs: 2 }}
       onResize={onResize}
     >
       <Box key="1" background={"white"}>
