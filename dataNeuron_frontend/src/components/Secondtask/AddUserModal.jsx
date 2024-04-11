@@ -92,7 +92,7 @@ const UserModal = ({ handleSubmit, handleChange, data }) => {
               colorScheme="blue"
               mr={3}
               onClick={(e) => {
-                handleSubmit(e), onClose();
+                handleSubmit(e, onClose);
               }}
             >
               Add

@@ -95,7 +95,7 @@ const UpdateUserModal = ({ data, handleChange, handleSubmit }) => {
               colorScheme="blue"
               mr={3}
               onClick={(e) => {
-                handleSubmit(e, "update", data._id), onClose();
+                handleSubmit(e, onClose, "update", data._id);
               }}
             >
               Update

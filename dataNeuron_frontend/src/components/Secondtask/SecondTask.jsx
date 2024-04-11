@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Text, Image, Box, SimpleGrid, Flex, Center } from "@chakra-ui/react";
+import {
+  Text,
+  Image,
+  Box,
+  SimpleGrid,
+  Flex,
+  Center,
+  useToast,
+} from "@chakra-ui/react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { AddData, GetData, UpdateData, count } from "../../redux/slices/action";
 import UserModal from "./AddUserModal";
 import UpdateUserModal from "./UpdateUserModal";
 import { ScaleLoader } from "react-spinners";
 const SecondTask = () => {
+  const toast = useToast();
   const details = {
     image: "",
     name: "",
@@ -17,11 +26,10 @@ const SecondTask = () => {
   //to store the useradded data in the form
   const [data, setData] = useState(details);
 
-  const [Error, setError] = useState("");
-  // const [error,setError]=useState("");
   const dispatch = useDispatch();
   var [updateData, setUpdateData] = useState([]);
-  const {
+
+const {
     data: employeDetails,
     Apicounts,
     loading,
@@ -58,27 +66,40 @@ const SecondTask = () => {
     }
   };
 
+  //Dynamicall toaster
+  const Toaster = (title, status) => {
+    toast({
+      title,
+      status,
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
   //function to dispatch the user details
-  const handleSubmit = (e, identifier, id, onClose) => {
-    if (
-      data.image.length < 2 &&
-      data.name.length < 2 &&
-      data.field.length < 2 &&
-      data.position.length < 2 &&
-      data.EmployeType.length < 2
-    ) {
-      alert("all field should be filled");
+  const handleSubmit = (e, onClose, identifier, id) => {
+    if (data.image.length < 1) {
+      Toaster("image field is required", "error");
+    } else if (data.name.length < 1) {
+      Toaster("name field is required", "error");
+    } else if (data.position.length < 1) {
+      Toaster("position field is required", "error");
+    } else if (data.field.length < 1) {
+      Toaster("field is required", "error");
     } else {
       if (!identifier) {
+        onClose();
         dispatch(AddData(data)).then(() => {
           dispatch(GetData()).then((res) => {
             setUpdateData(res.payload);
+            Toaster("Employee Created.", "success");
           });
           dispatch(count());
         });
       } else {
         dispatch(UpdateData({ id, data })).then(() => {
           dispatch(count());
+          Toaster("Employee Updated.", "success");
           onClose();
         });
       }
